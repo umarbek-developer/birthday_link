@@ -1,0 +1,643 @@
+:root {
+  --pink: #ff087f;
+  --hot-pink: #ff168c;
+  --red: #ff153f;
+  --deep: #07020b;
+  --card: rgba(2, 4, 9, 0.95);
+  --letter: rgba(5, 18, 31, 0.97);
+  --white: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: white;
+  font-family: Inter, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 27, 140, 0.75), transparent 30%),
+    radial-gradient(circle at 20% 70%, rgba(255, 0, 102, 0.35), transparent 32%),
+    linear-gradient(145deg, #ff0080 0%, #8d004c 35%, #180014 75%, #050207 100%);
+}
+
+button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------------- Background ---------------- */
+
+.background {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.background::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.12) 0 1px, transparent 2px) 0 0 / 75px 75px,
+    radial-gradient(circle, rgba(255, 20, 130, 0.22) 0 2px, transparent 4px) 30px 40px / 100px 100px;
+  animation: drift 22s linear infinite;
+}
+
+.glow {
+  position: absolute;
+  width: 35vw;
+  height: 35vw;
+  min-width: 260px;
+  min-height: 260px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+}
+
+.glow-1 {
+  background: #ff0084;
+  top: -15%;
+  left: -10%;
+}
+
+.glow-2 {
+  background: #b900ff;
+  right: -15%;
+  top: 25%;
+  animation: pulse 5s ease-in-out infinite;
+}
+
+.glow-3 {
+  background: #ff004c;
+  left: 25%;
+  bottom: -20%;
+  animation: pulse 7s ease-in-out infinite reverse;
+}
+
+#heartField {
+  position: absolute;
+  inset: 0;
+}
+
+.bg-heart {
+  position: absolute;
+  color: rgba(255, 155, 214, 0.55);
+  font-size: clamp(22px, 4vw, 58px);
+  text-shadow: 0 0 20px rgba(255, 0, 128, 0.8);
+  animation: floatBg linear infinite;
+}
+
+#particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------- Main ---------------- */
+
+.page {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 680px);
+  margin: 0 auto;
+  padding: 34px 18px 40px;
+}
+
+.site-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 25px;
+  animation: heartbeat 1.8s ease-in-out infinite;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: clamp(1.45rem, 5vw, 2.1rem);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.site-header p {
+  margin: 5px 0 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------------- Main card ---------------- */
+
+.message-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.65),
+    0 0 50px rgba(255, 0, 126, 0.18);
+}
+
+/* ---------------- Top controls ---------------- */
+
+.card-top {
+  position: absolute;
+  z-index: 10;
+  top: 16px;
+  left: 18px;
+  right: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+}
+
+.sound-btn {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+
+  color: white;
+  background: rgba(255, 255, 255, 0.06);
+
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.sound-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------------- Galaxy scene ---------------- */
+
+.love-scene {
+  position: relative;
+  height: 430px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(ellipse at 50% 62%, rgba(255, 0, 54, 0.55), transparent 34%),
+    radial-gradient(ellipse at 50% 60%, rgba(255, 0, 100, 0.15), transparent 55%),
+    #000;
+}
+
+.love-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.15),
+      transparent 30%,
+      rgba(0, 0, 0, 0.3)
+    );
+}
+
+#loveCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.center-message {
+  position: absolute;
+  z-index: 4;
+
+  left: 50%;
+  top: 58%;
+
+  width: 100%;
+
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+
+  text-shadow: 0 0 18px rgba(255, 0, 80, 0.9);
+}
+
+.mini-heart {
+  font-size: 20px;
+  color: #fff;
+  animation: heartbeat 0.9s ease-in-out infinite;
+}
+
+.center-message h2 {
+  margin: 5px 0 2px;
+
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(2.4rem, 9vw, 4.2rem);
+  font-weight: 400;
+}
+
+.center-message p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* ---------------- Orbiting text ---------------- */
+
+.orbit {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+
+  width: 150%;
+  height: 100px;
+
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 35px;
+
+  color: #fff;
+
+  font-family: monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+
+  text-shadow: 0 0 10px #ff164f;
+
+  border-top: 1px solid rgba(255, 20, 80, 0.55);
+  border-bottom: 1px solid rgba(255, 20, 80, 0.22);
+
+  transform: translate(-50%, -50%) rotate(-7deg);
+  opacity: 0.85;
+
+  pointer-events: none;
+}
+
+.orbit-one {
+  animation: orbitMove 9s ease-in-out infinite alternate;
+}
+
+.orbit-two {
+  top: 76%;
+  transform: translate(-50%, -50%) rotate(7deg) scale(0.85);
+  opacity: 0.55;
+  animation: orbitMoveReverse 13s ease-in-out infinite alternate;
+}
+
+/* ---------------- Floating hearts ---------------- */
+
+.floating-heart {
+  position: absolute;
+  z-index: 4;
+
+  color: #ff263d;
+  font-size: 22px;
+
+  text-shadow: 0 0 14px #ff003d;
+
+  animation: floatHeart 3.5s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+.fh-1 {
+  left: 13%;
+  top: 56%;
+}
+
+.fh-2 {
+  right: 13%;
+  top: 50%;
+  animation-delay: -0.8s;
+}
+
+.fh-3 {
+  left: 25%;
+  top: 30%;
+  animation-delay: -1.4s;
+}
+
+.fh-4 {
+  right: 24%;
+  top: 34%;
+  animation-delay: -2s;
+}
+
+/* ---------------- Love letter ---------------- */
+
+.letter {
+  position: relative;
+  z-index: 6;
+
+  width: 90%;
+  margin: -2px auto 0;
+  padding: 27px 22px 24px;
+
+  background: var(--letter);
+  border-radius: 0 0 22px 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+
+  color: #ff5a9f;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.letter h2 {
+  margin: 0;
+
+  font-family: "Great Vibes", cursive;
+  font-size: 2.65rem;
+  font-weight: 400;
+}
+
+.letter h2 span {
+  font-family: Inter, sans-serif;
+  font-size: 1.4rem;
+}
+
+.letter-text {
+  max-width: 460px;
+  margin: 10px 0 20px;
+
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+.reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+
+  border: 1px solid rgba(255, 69, 131, 0.55);
+  border-radius: 999px;
+
+  padding: 11px 17px;
+
+  color: white;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 0, 105, 0.35),
+    rgba(255, 0, 45, 0.1)
+  );
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.reveal-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 0, 105, 0.3);
+}
+
+.reveal-btn:active {
+  transform: translateY(0);
+}
+
+.reveal-btn:focus-visible,
+.sound-btn:focus-visible {
+  outline: 2px solid #ff6bac;
+  outline-offset: 3px;
+}
+
+.button-arrow {
+  font-size: 1.1rem;
+}
+
+/* ---------------- Hidden message ---------------- */
+
+.secret {
+  position: relative;
+  z-index: 6;
+
+  max-height: 0;
+  overflow: hidden;
+
+  padding: 0 22px;
+
+  text-align: center;
+
+  opacity: 0;
+  background: var(--letter);
+
+  transition:
+    max-height 0.7s ease,
+    opacity 0.45s ease,
+    padding 0.7s ease;
+}
+
+.message-card.open .secret {
+  max-height: 210px;
+  padding: 0 22px 30px;
+  opacity: 1;
+}
+
+.secret-heart {
+  color: #ff174f;
+  font-size: 2rem;
+  animation: heartbeat 1s ease-in-out infinite;
+}
+
+.secret p {
+  max-width: 400px;
+  margin: 8px auto;
+
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.6;
+}
+
+.secret strong {
+  font-family: "Great Vibes", cursive;
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+/* ---------------- Footer ---------------- */
+
+footer {
+  padding: 25px 0 0;
+
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+footer span {
+  color: #ff1d57;
+}
+
+/* ---------------- Animations ---------------- */
+
+@keyframes drift {
+  to {
+    transform: translate(-70px, 70px);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.15);
+    opacity: 0.75;
+  }
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  20% {
+    transform: scale(1.12);
+  }
+
+  40% {
+    transform: scale(0.98);
+  }
+
+  60% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes floatBg {
+  0% {
+    transform: translateY(110vh) rotate(0deg) scale(0.7);
+    opacity: 0;
+  }
+
+  10%,
+  80% {
+    opacity: 0.65;
+  }
+
+  100% {
+    transform: translateY(-15vh) rotate(25deg) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes floatHeart {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-16px) scale(1.12);
+  }
+}
+
+@keyframes orbitMove {
+  from {
+    margin-left: -35px;
+  }
+
+  to {
+    margin-left: 35px;
+  }
+}
+
+@keyframes orbitMoveReverse {
+  from {
+    margin-left: 35px;
+  }
+
+  to {
+    margin-left: -35px;
+  }
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 480px) {
+  .page {
+    padding: 25px 12px 32px;
+  }
+
+  .message-card {
+    border-radius: 22px;
+  }
+
+  .love-scene {
+    height: 370px;
+  }
+
+  .letter {
+    width: 92%;
+    padding: 24px 18px 22px;
+  }
+
+  .orbit {
+    width: 180%;
+  }
+}
+
+@media (min-width: 700px) {
+  .page {
+    padding-top: 50px;
+  }
+
+  .love-scene {
+    height: 450px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

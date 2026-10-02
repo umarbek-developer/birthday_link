@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Галактика любви</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💗</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050003; --ink:#ffe6ee; --accent:#ff2d55; --glow:#ff5c8a;
+  --letter:linear-gradient(160deg,rgba(105,12,38,.94),rgba(28,0,12,.96));
+  --letter-love:15.5rem;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);overflow:hidden;
+  font-family:"Playfair Display",Georgia,serif}
+body{background:radial-gradient(120% 90% at 50% 20%,#3a0618 0%,var(--bg) 70%)}
+canvas{touch-action:none;position:fixed;inset:0;width:100%;height:100%;display:block}
+
+/* intro card */
+#intro{position:fixed;inset:0;display:grid;place-items:center;transition:opacity .9s ease,visibility .9s}
+#intro.gone{opacity:0;visibility:hidden}
+.card{width:min(86%,22rem);padding:2.2rem 1.5rem 2rem;text-align:center;border-radius:1.2rem;
+  background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.01));
+  border:1px solid rgba(255,120,150,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 0 60px rgba(255,30,80,.18)}
+.card h1{margin:0;font-size:2.6rem;font-weight:600;letter-spacing:.01em;text-shadow:0 0 18px var(--glow),0 0 40px var(--accent)}
+.beat{display:block;margin:1.2rem 0 .4rem;font-size:4.2rem;line-height:1;color:var(--accent);
+  text-shadow:0 0 24px var(--accent);animation:beat 1.4s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+.card small{display:block;opacity:.6;font-style:italic;margin-bottom:1.4rem}
+button{font:inherit;cursor:pointer}
+#go{padding:.7rem 2rem;border:0;border-radius:2rem;color:#fff;font-size:.95rem;letter-spacing:.12em;
+  background:linear-gradient(180deg,#ff3b64,#d3002f);box-shadow:0 0 22px rgba(255,40,90,.55)}
+#go:focus-visible,#lc:focus-visible,#hb:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* the letter (from the video's CSS) */
+.Para_Ti{
+  position:absolute;
+  left:50%;
+  bottom:calc(1rem + env(safe-area-inset-bottom,0px));
+  width:90%;
+  max-width:26rem;
+  font-size:2rem;
+  font-family:"Te Amo","Marck Script",cursive;
+  height:var(--letter-love);
+  transform:translateX(-50%) translateY(130%);
+  background:var(--letter);
+  box-sizing:border-box;padding:1.1rem 1.3rem;border-radius:1rem;text-align:center;
+  border:1px solid rgba(255,110,150,.3);box-shadow:0 0 50px rgba(255,30,80,.3);
+  opacity:0;pointer-events:none;
+  transition:transform .8s cubic-bezier(.2,.9,.25,1),opacity .6s;
+  display:flex;flex-direction:column;justify-content:center;gap:.5rem;z-index:5}
+.Para_Ti.open{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
+.Para_Ti h2{margin:0;font-size:1.25em;font-weight:400;text-shadow:0 0 14px var(--glow)}
+.Para_Ti p{margin:0;font-size:.62em;line-height:1.3;color:#ffd3df}
+#lc{align-self:center;margin-top:.3rem;padding:.35rem 1.1rem;border-radius:2rem;border:1px solid rgba(255,255,255,.3);
+  background:transparent;color:var(--ink);font-size:.55em}
+
+#hb,#mb{position:fixed;right:14px;top:calc(14px + env(safe-area-inset-top,0px));width:44px;height:44px;border:0;
+  border-radius:50%;background:#fff;color:var(--accent);font-size:1.4rem;line-height:1;z-index:6;
+  box-shadow:0 0 18px rgba(255,255,255,.4);opacity:0;visibility:hidden;transition:opacity 1s}
+#mb{right:auto;left:14px;font-size:1.25rem}
+#mb.off{opacity:.5!important;text-decoration:line-through}
+#hint{position:fixed;left:0;right:0;top:calc(66px + env(safe-area-inset-top,0px));text-align:center;font-style:italic;font-size:.9rem;color:#ffc2d4;text-shadow:0 0 10px #ff2d55;opacity:0;transition:opacity 1.2s;pointer-events:none}
+#hint.on{opacity:.9}
+#hb.on,#mb.on{opacity:1;visibility:visible}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<div id="intro">
+  <div class="card">
+    <h1>Галактика любви</h1>
+    <span class="beat">♥</span>
+    <small>целая вселенная для тебя</small>
+    <button id="go">Начать</button>
+  </div>
+</div>
+
+<button id="hb" aria-label="Открыть письмо">♥</button>
+<button id="mb" aria-label="Музыка">♪</button>
+<div id="hint">Вращай галактику рукой · нажимай на стикеры</div>
+
+<section class="Para_Ti" id="letter" aria-live="polite">
+  <h2 id="lt"></h2>
+  <p id="lp"></p>
+  <button id="lc">закрыть ♥</button>
+</section>
+
+<script>
+/* ---- edit these ---- */
+const GREET=["С Днём Рождения!","Вращай галактику рукой и нажимай на каждый стикер."];
+const MESSAGES=[
+  ["С Днём Рождения","Пусть новый год принесёт тебе всё, о чём ты мечтаешь."],
+  ["Любовь моей жизни","Чем больше времени мы вместе, тем сильнее моя любовь."],
+  ["Для тебя","Среди тысячи галактик мой выбор — ты, в каждой из них."]
+];
+const STICKER_SIZE=.13; // smaller number = smaller stickers
+// [art, title, text, optional image file]. "pair:xxx" = spiderman.png next to the rabbit art xxx (put spiderman.png beside this HTML).
+const STICKERS=[
+  ["bunnyHat","С Днём Рождения!","Сегодня вся вселенная празднует твоё появление на свет."],
+  ["pair:bunnyGift","Подарок для тебя","Ты — лучший подарок, который мне подарила жизнь."],
+  ["bunnyBalloon","Пусть мечты летят","Пусть этот год поднимет тебя так же высоко, как эти шарики."],
+  ["pair:bunnyParty","Пора праздновать!","Сегодня время смеяться, танцевать и есть торт без угрызений совести."],
+  ["bunnyWand","Желание исполнится","Загадай желание — я сделаю так, чтобы оно сбылось."]
+];
+const MUSIC_SRC="music.m4a"; // put music.mp3 in the same folder as this HTML file
+const WORDS=["БЕСКОНЕЧНОСТЬ ∞ ♥","ВЕЧНАЯ ЛЮБОВЬ ♥","ЛЮБЛЮ ТЕБЯ ♥","МОЯ ЛЮБОВЬ ♥","ЛЮБОВЬ МОЕЙ ЖИЗНИ ♥","МОЯ ЖИЗНЬ ♥","БЕСКОНЕЧНОСТЬ ∞ ♥","ЛЮБЛЮ ТЕБЯ ♥"];
+/* -------------------- */
+
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const CAM=2.4;let tilt=.5,ST=Math.sin(tilt),CT=Math.cos(tilt),yaw=0,yawV=0,drag=0,lastMove=0;
+let W,H,D,U,F,cx,cy,HS,hy0;
+function resize(){
+  D=Math.min(devicePixelRatio||1,2);
+  W=cv.width=innerWidth*D;H=cv.height=innerHeight*D;
+  U=Math.min(W,H);F=U*1.1;cx=W/2;cy=H*.66;
+  HS=Math.min(.18*U,H*.2);hy0=cy-HS*1.7;
+}
+addEventListener('resize',resize);resize();
+
+/* galaxy: 3 spiral arms, 3 colour buckets */
+const N=9000,gr=new Float32Array(N),ga=new Float32Array(N),gy=new Float32Array(N),gb=new Uint8Array(N);
+for(let i=0;i<N;i++){
+  const r=Math.pow(Math.random(),1.6);
+  const spread=(Math.random()+Math.random()+Math.random()-1.5)*(.18+.5*r);
+  gr[i]=r+spread*.12*r;
+  ga[i]=(i%3)*2.0944+r*4.4+spread;
+  gy[i]=(Math.random()-.5)*.05*(1-r);
+  gb[i]=r<.28?0:r<.62?1:2;
+}
+const gsx=new Float32Array(N),gsy=new Float32Array(N),gsz=new Float32Array(N);
+const BCOL=['rgba(255,190,120,.9)','rgba(255,60,60,.8)','rgba(190,20,50,.65)'];
+
+/* heart made of particles */
+const HP=2600,hx=new Float32Array(HP),hyy=new Float32Array(HP),hph=new Float32Array(HP);
+for(let i=0;i<HP;i++){
+  const t=Math.random()*6.2832,s=Math.random()<.55?1-.08*Math.random():Math.pow(Math.random(),.8);
+  hx[i]=16*Math.pow(Math.sin(t),3)*s/14.5;
+  hyy[i]=((13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))+2.5)*s/14.5;
+  hph[i]=Math.random()*6.28;
+}
+
+/* orbiting words, floating hearts, warp stars */
+const words=WORDS.map((w,i)=>({w,r:.5+.55*((i*.37)%1),a:i*(6.28/WORDS.length),sp:(.08+.05*((i*.61)%1))*(i%2?-1:1)}));
+const fh=Array.from({length:16},(_,i)=>({r:.3+Math.random()*.8,a:Math.random()*6.28,sp:.07+Math.random()*.08,ph:Math.random(),da:(Math.random()-.5)*.2}));
+const stars=Array.from({length:520},()=>({a:Math.random()*6.28,z:Math.random(),r:.4+Math.random(),c:Math.random()<.45?'#fff':'#ff7aa6'}));
+
+function P(x,y,z,S){ // world -> screen
+  const y2=y*CT+z*ST,z2=z*CT-y*ST,k=F/(z2+CAM);
+  return [cx+x*k*S,cy-y2*k*S,k];
+}
+
+
+/* original rabbit sticker art (SVG) */
+const face=(x,y)=>`<circle cx="${x-8}" cy="${y}" r="2.4" fill="#2b1a22"/><circle cx="${x+8}" cy="${y}" r="2.4" fill="#2b1a22"/><ellipse cx="${x-14}" cy="${y+5}" rx="4" ry="2.8" fill="#ff9db5" opacity=".8"/><ellipse cx="${x+14}" cy="${y+5}" rx="4" ry="2.8" fill="#ff9db5" opacity=".8"/><path d="M${x-3} ${y+5}q3 3 6 0" stroke="#2b1a22" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+const E='fill="#fff" stroke="#f1c3d0" stroke-width="2"';
+const rab=over=>`<circle cx="66" cy="80" r="4.5" ${E}/><ellipse cx="40" cy="15" rx="6" ry="14" ${E} transform="rotate(-8 40 15)"/><ellipse cx="60" cy="15" rx="6" ry="14" ${E} transform="rotate(8 60 15)"/><ellipse cx="40" cy="17" rx="2.5" ry="9" fill="#ffc2d4" transform="rotate(-8 40 15)"/><ellipse cx="60" cy="17" rx="2.5" ry="9" fill="#ffc2d4" transform="rotate(8 60 15)"/><ellipse cx="42" cy="92" rx="9" ry="5" ${E}/><ellipse cx="58" cy="92" rx="9" ry="5" ${E}/><ellipse cx="50" cy="72" rx="15" ry="18" ${E}/><ellipse cx="50" cy="77" rx="8" ry="9" fill="#ffe3ec"/><ellipse cx="34" cy="70" rx="4.5" ry="9" ${E} transform="rotate(18 34 70)"/><ellipse cx="66" cy="70" rx="4.5" ry="9" ${E} transform="rotate(-18 66 70)"/><ellipse cx="50" cy="45" rx="21" ry="18" ${E}/>${face(50,44)}${over}`;
+const star=(x,y,r)=>`<polygon points="${[0,1,2,3,4,5,6,7,8,9].map(i=>{const a=-Math.PI/2+i*Math.PI/5,q=i%2?r*.45:r;return (x+q*Math.cos(a)).toFixed(1)+','+(y+q*Math.sin(a)).toFixed(1)}).join(' ')}" fill="#ffd23f" stroke="#f0a800" stroke-width="1"/>`;
+const hat='<polygon points="42,29 58,29 50,10" fill="#ff5c8a"/><circle cx="50" cy="9" r="3.5" fill="#ffd86b"/>';
+const ART={
+ bunnyHat:rab(hat),
+ bunnyBalloon:rab('<line x1="68" y1="64" x2="82" y2="38" stroke="#c9a" stroke-width="1.5"/><ellipse cx="83" cy="26" rx="10" ry="12" fill="#ff4d6d"/><ellipse cx="79" cy="22" rx="2.5" ry="4" fill="#fff" opacity=".5"/>'),
+ bunnyWand:rab('<line x1="67" y1="64" x2="84" y2="40" stroke="#c98a4b" stroke-width="2.6" stroke-linecap="round"/>'+star(86,32,9)),
+ bunnyGift:rab('<rect x="40" y="64" width="20" height="16" rx="2" fill="#ff4d6d"/><rect x="48" y="64" width="4" height="16" fill="#ffd23f"/><path d="M50 64q-7-8-9-2t9 2q7-8 9-2t-9 2z" fill="#ffd23f"/>'),
+ bunnyParty:rab(hat+'<rect x="14" y="30" width="5" height="3" fill="#ff5c8a" transform="rotate(30 16 31)"/><rect x="84" y="50" width="5" height="3" fill="#ffd86b" transform="rotate(-30 86 51)"/><rect x="86" y="22" width="4" height="3" fill="#7ee2a8"/><rect x="10" y="60" width="4" height="3" fill="#7ee2a8"/>')
+};
+const svgURL=n=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200">'+ART[n]+'</svg>');
+function mkImg(n,file){const i=new Image(),fb=ART[n]?svgURL(n):null;
+  if(file){if(fb)i.onerror=()=>{i.onerror=null;i.src=fb};i.src=file}else i.src=fb||n;return i}
+/* Spider-Man image + rabbit side by side, composed on an offscreen canvas */
+function mkPair(art,file){
+  const c=document.createElement('canvas');c.width=410;c.height=300;c.rdy=0;
+  const sp=new Image(),rb=new Image();let n=0,bad=0;
+  const done=()=>{if(++n<2)return;const g=c.getContext('2d');
+    if(!bad){const h=280,w=h*sp.naturalWidth/sp.naturalHeight;g.drawImage(sp,0,10,w,h)}
+    g.drawImage(rb,210,100,200,200);c.rdy=1};
+  sp.onload=done;sp.onerror=()=>{bad=1;done()};rb.onload=done;
+  sp.src=file||'spiderman.png';rb.src=svgURL(art);return c}
+const stickers=STICKERS.map((m,i)=>({sc:m[0].startsWith('pair:')?1.7:1,img:m[0].startsWith('pair:')?mkPair(m[0].slice(5),m[3]):mkImg(m[0],m[3]),msg:[m[1],m[2]],r:[.55,.85,.68,.96,.76][i],a:i*1.2566,sp:.05,hit:-1e9,x:-99,y:-99,k:1,rad:0}));
+let started=0,t0=0,last=0;
+function frame(now){
+  requestAnimationFrame(frame);
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  ctx.globalCompositeOperation='source-over';
+  if(!started){ctx.clearRect(0,0,W,H);return}
+  const t=(now-t0)/1000;
+  if(!drag){yaw+=yawV*dt;yawV*=Math.pow(.05,dt)}
+  ST=Math.sin(tilt);CT=Math.cos(tilt);
+  const wa=t<2?1:Math.max(0,1-(t-2)/.9);
+  const g=Math.min(Math.max((t-1.6)/2.4,0),1),S=1-Math.pow(1-g,3);
+
+  ctx.fillStyle=t<2.4?'rgba(5,0,3,.28)':'#050003';ctx.fillRect(0,0,W,H);
+
+  /* warp tunnel */
+  if(wa>0){
+    ctx.globalAlpha=wa;ctx.lineWidth=1.4*D;
+    for(const s of stars){
+      const pz=s.z;s.z-=dt*(.25+t*.7);
+      if(s.z<=.02){s.z=1;s.a=Math.random()*6.28}
+      const ca=Math.cos(s.a),sa=Math.sin(s.a),k=U*.09*s.r;
+      const r1=k*(1/pz-1),r2=k*(1/s.z-1);
+      ctx.strokeStyle=s.c;ctx.beginPath();
+      ctx.moveTo(cx+ca*r1,cy*.9+sa*r1);ctx.lineTo(cx+ca*r2,cy*.9+sa*r2);ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  }
+  if(S<=0)return;
+
+  /* galaxy disc */
+  for(let i=0;i<N;i++){
+    const r=gr[i],a=ga[i]+t*.14/(r+.12)+yaw;
+    const [sx,sy,k]=P(r*Math.cos(a),gy[i],r*Math.sin(a),S);
+    gsx[i]=sx;gsy[i]=sy;gsz[i]=Math.max(1.1*D,k*.0042*S);
+  }
+  ctx.globalCompositeOperation='lighter';
+  for(let b=0;b<3;b++){
+    ctx.fillStyle=BCOL[b];
+    for(let i=0;i<N;i++)if(gb[i]===b)ctx.fillRect(gsx[i],gsy[i],gsz[i],gsz[i]);
+  }
+
+  /* black hole */
+  ctx.globalCompositeOperation='source-over';
+  const R0=F/CAM*.15*S;
+  ctx.save();ctx.translate(cx,cy);ctx.scale(1,ST+.12);
+  const gg=ctx.createRadialGradient(0,0,0,0,0,R0);
+  gg.addColorStop(0,'#000');gg.addColorStop(.38,'#000');gg.addColorStop(.46,'rgba(255,210,140,.95)');
+  gg.addColorStop(.62,'rgba(255,70,40,.55)');gg.addColorStop(1,'rgba(255,20,60,0)');
+  ctx.fillStyle=gg;ctx.beginPath();ctx.arc(0,0,R0,0,6.2832);ctx.fill();ctx.restore();
+
+  /* floating words on the disc */
+  ctx.globalCompositeOperation='lighter';ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const w of words){
+    const a=w.a+t*w.sp+yaw,r=w.r*S;
+    const [x1,y1,k]=P(r*Math.cos(a),.02,r*Math.sin(a),1);
+    const [x2,y2]=P(r*Math.cos(a+.05*Math.sign(w.sp)),.02,r*Math.sin(a+.05*Math.sign(w.sp)),1);
+    let rot=Math.atan2(y2-y1,x2-x1);if(Math.cos(rot)<0)rot+=Math.PI;
+    ctx.save();ctx.translate(x1,y1);ctx.rotate(rot);
+    ctx.font='bold '+Math.max(8*D,.05*k*S)+'px "Courier New",monospace';
+    ctx.shadowColor='#ff2d55';ctx.shadowBlur=14*D;ctx.fillStyle='rgba(255,120,160,'+Math.min(1,S*(.45+.25*k/ (F/CAM)))+')';
+    ctx.fillText(w.w,0,0);ctx.restore();
+  }
+  ctx.shadowBlur=0;
+
+  /* beam */
+  const tip=hy0+HS*S;
+  for(let i=0;i<140;i++){
+    const u=(t*.45+i/140)%1,x=cx+Math.sin(u*9+i)*10*D*(1-u),y=cy-u*(cy-tip);
+    ctx.fillStyle='rgba(255,60,70,'+(.9*(1-u*.5)*S)+')';ctx.fillRect(x,y,1.8*D,1.8*D);
+  }
+
+  /* particle heart */
+  const pul=1+.045*Math.sin(t*3.1)+(Math.sin(t*6.2)>.9?.03:0);
+  for(let i=0;i<HP;i++){
+    const tw=.55+.45*Math.sin(t*2.6+hph[i]);
+    ctx.fillStyle='rgba(255,'+(40+tw*50|0)+','+(60+tw*30|0)+','+(tw*.95*S)+')';
+    const px=cx+hx[i]*HS*pul*S+Math.sin(t*3+hph[i])*.6*D;
+    const py=cy-(cy-hy0)*S-hyy[i]*HS*pul*S+Math.cos(t*2.7+hph[i])*.6*D;
+    ctx.fillRect(px,py,1.7*D,1.7*D);
+  }
+
+  /* drifting pink hearts */
+  ctx.font=(.06*F/CAM)+'px serif';ctx.shadowColor='#ff4d86';ctx.shadowBlur=16*D;
+  for(const h of fh){
+    const u=(t*h.sp+h.ph)%1,a=h.a+t*h.da+yaw;
+    const [x,y,k]=P(h.r*Math.cos(a),u*.9,h.r*Math.sin(a),S);
+    ctx.fillStyle='rgba(255,90,140,'+(Math.sin(u*Math.PI)*.8*S)+')';
+    ctx.font=(.075*k*S)+'px serif';ctx.fillText('♥',x,y);
+  }
+  ctx.shadowBlur=0;ctx.globalCompositeOperation='source-over';
+
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const s of stickers){
+    const a=s.a+t*s.sp+yaw,r=s.r*S;
+    const [x,y,k]=P(r*Math.cos(a),.07+.03*Math.sin(t*2+s.a),r*Math.sin(a),1);
+    const pop=Math.max(0,1-(now-s.hit)/450),sz=Math.max(20*D,STICKER_SIZE*k*S)*s.sc*(1+.4*Math.sin(pop*3.14));
+    s.x=x;s.y=y;s.k=k;s.rad=Math.max(sz*.55,24*D);
+    ctx.save();ctx.translate(x,y);ctx.rotate(Math.sin(t*1.5+s.a)*.1);
+    ctx.shadowColor='rgba(255,90,140,.8)';ctx.shadowBlur=10*D;
+    const im=s.img,cvs=im.tagName==='CANVAS',iw=cvs?im.width:im.naturalWidth,ih=cvs?im.height:im.naturalHeight;
+    if(cvs?im.rdy:(im.complete&&iw)){const ar=iw/ih,w=ar>1?sz:sz*ar,h=ar>1?sz/ar:sz;ctx.drawImage(im,-w/2,-h/2,w,h)}
+    ctx.restore();
+  }
+  if(!shown&&t>6){shown=1;openLetter(GREET);hint.classList.add('on');setTimeout(()=>hint.classList.remove('on'),9000)}
+}
+
+/* letter */
+const L=document.getElementById('letter'),lt=document.getElementById('lt'),lp=document.getElementById('lp'),hb=document.getElementById('hb');
+let mi=0,shown=0;
+const hint=document.getElementById('hint');
+function openLetter(m){m=m||MESSAGES[mi++%MESSAGES.length];lt.textContent=m[0];lp.textContent=m[1];L.classList.add('open')}
+document.getElementById('lc').onclick=()=>L.classList.remove('open');
+hb.onclick=()=>L.classList.contains('open')?L.classList.remove('open'):openLetter();
+
+document.getElementById('go').onclick=()=>{
+  document.getElementById('intro').classList.add('gone');
+  started=1;t0=performance.now();startMusic();
+  setTimeout(()=>{hb.classList.add('on');mb.classList.add('on')},4000);
+};
+
+/* drag to rotate, tap a sticker */
+let px=0,py=0,moved=0;
+cv.addEventListener('pointerdown',e=>{if(!started)return;drag=1;cv.setPointerCapture(e.pointerId);px=e.clientX;py=e.clientY;moved=0;yawV=0});
+cv.addEventListener('pointermove',e=>{
+  if(!drag)return;const dx=e.clientX-px,dy=e.clientY-py;px=e.clientX;py=e.clientY;
+  moved+=Math.abs(dx)+Math.abs(dy);lastMove=performance.now();
+  yaw+=dx*.008;yawV=Math.max(-6,Math.min(6,dx*.48));tilt=Math.max(.2,Math.min(1.1,tilt+dy*.004));
+});
+cv.addEventListener('pointerup',e=>{
+  if(!drag)return;drag=0;if(performance.now()-lastMove>80)yawV=0;
+  if(moved<10){
+    const rx=e.clientX*D,ry=e.clientY*D;let best=null,bk=0;
+    for(const s of stickers){if(Math.hypot(rx-s.x,ry-s.y)<s.rad*1.5&&s.k>bk){best=s;bk=s.k}}
+    if(best){best.hit=performance.now();openLetter(best.msg)}
+  }
+});
+cv.addEventListener('pointercancel',()=>{drag=0});
+
+/* background music (music.mp3, looped) */
+const mb=document.getElementById('mb');
+let el,muted=0;
+function startMusic(){try{el=new Audio(MUSIC_SRC);el.loop=true;el.volume=.7;el.play().catch(()=>{})}catch(e){}}
+mb.onclick=()=>{muted=!muted;mb.classList.toggle('off',muted);if(el)el.muted=!!muted};
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
